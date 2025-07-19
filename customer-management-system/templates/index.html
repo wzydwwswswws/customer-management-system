@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="header text-center">
+        <h1>客户管理系统</h1>
+        <p class="lead">轻松管理您的客户信息</p>
+    </div>
+
+    <div class="search-container">
+        <div class="row">
+            <div class="col-md-8">
+                <form action="{{ url_for('search_customers') }}" method="get">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="keyword" 
+                               placeholder="输入客户名称关键词..." 
+                               value="{{ keyword if keyword else '' }}">
+                        <button class="btn btn-primary" type="submit">搜索</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{{ url_for('add_customer') }}" class="btn btn-success">添加新客户</a>
+            </div>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if customers %}
+        <div class="row">
+            {% for customer in customers %}
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title">{{ customer['name'] }}</h5>
+                                <div>
+                                    <a href="{{ url_for('edit_customer', id=customer['id']) }}" 
+                                       class="btn btn-sm btn-primary btn-action">编辑</a>
+                                    <button onclick="confirmDelete({{ customer['id'] }}, '{{ customer['name'] }}')" 
+                                            class="btn btn-sm btn-danger btn-action">删除</button>
+                                    <form id="delete-form-{{ customer['id'] }}" 
+                                          action="{{ url_for('delete_customer', id=customer['id']) }}" 
+                                          method="POST" style="display: none;"></form>
+                                </div>
+                            </div>
+                            <div class="customer-info">
+                                <p class="card-text">{{ customer['info'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <h4>{% if keyword %}没有找到匹配的客户{% else %}暂无客户数据{% endif %}</h4>
+            <p class="text-muted">
+                {% if keyword %}
+                    请尝试其他关键词
+                {% else %}
+                    点击"添加新客户"按钮开始添加客户信息
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+
+    <div class="footer">
+        <p>客户管理系统 &copy; {{ now.year }} - 您的业务管理助手</p>
+    </div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">编辑客户信息</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('edit_customer', id=customer['id']) }}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">客户名称</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ customer['name'] }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="info" class="form-label">客户信息</label>
+                    <textarea class="form-control" id="info" name="info" 
+                              rows="5" required>{{ customer['info'] }}</textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary me-2">取消</a>
+                    <button type="submit" class="btn btn-primary">更新</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
